@@ -5,12 +5,10 @@ import 'package:hsi/Model/fetch_about_hsi_details_model.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/custom_appbar_subscreen.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
-import 'package:hsi/repository/fecth_about_hsi_details_helper.dart';
+import 'package:hsi/repository/about_hsi_details_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-import 'package:provider/provider.dart';
 import 'package:open_file/open_file.dart';
 
 // load HSI Logos & Emblems details from web server
@@ -280,17 +278,8 @@ class _HsiLogosAndEmblemsScreenState extends State<HsiLogosAndEmblemsScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(const Color(0xFFFAFAFA));
-    });
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(

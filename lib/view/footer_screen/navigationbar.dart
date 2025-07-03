@@ -238,29 +238,27 @@ class _BottomNavBarWidgetState extends State<BottomNavBarWidget> {
 
   Widget _buildCompactNavItem(int index, String iconPath, String label) {
     bool isSelected = _currentIndex == index;
-    return Expanded(
-      child: InkWell(
-        onTap: () => _handleTabSelection(index),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          // height: 40.h,
-          decoration: BoxDecoration(
-            color:
-                isSelected
-                    ? const Color(0xFF005496).withOpacity(0.1)
-                    : Colors.white,
-            border:
-                isSelected
-                    ? const Border(
-                      top: BorderSide(color: Color(0xFF005496), width: 3),
-                    )
-                    : const Border(
-                      top: BorderSide(color: Colors.white, width: 3),
-                    ),
-          ),
-          child: _buildNavItemContent(iconPath, label, isSelected),
+    return InkWell(
+      onTap: () => _handleTabSelection(index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        // height: 40.h,
+        decoration: BoxDecoration(
+          color:
+              isSelected
+                  ? const Color(0xFF005496).withOpacity(0.1)
+                  : Colors.white,
+          border:
+              isSelected
+                  ? const Border(
+                    top: BorderSide(color: Color(0xFF005496), width: 3),
+                  )
+                  : const Border(
+                    top: BorderSide(color: Colors.white, width: 3),
+                  ),
         ),
+        child: _buildNavItemContent(iconPath, label, isSelected),
       ),
     );
   }

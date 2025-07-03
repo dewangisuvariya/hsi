@@ -96,3 +96,11 @@ const String hrIcon = "assets/images/HR_logo.png";
 const String strength = "assets/images/Strength.png";
 const String ellipse = "assets/images/Ellipse_7.png";
 const String videoPlay = "assets/images/play.png";
+
+const String imageOne = "assets/images/image_1.jpg";
+const String imageTwo = "assets/images/image_2.jpg";
+const String imageThree = "assets/images/image_3.jpg";
+const String imageFour = "assets/images/image_4.jpg";
+const String imageFive = "assets/images/image_5.jpg";
+const String imageSix = "assets/images/image_6.jpg";
+const String imageSeven = "assets/images/image_7.jpg";

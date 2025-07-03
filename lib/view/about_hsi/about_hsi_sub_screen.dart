@@ -5,9 +5,7 @@ import 'package:hsi/custom/custom_appbar_subscreen.dart';
 import 'package:hsi/custom/leagueTile_Widget.dart';
 import 'package:hsi/custom/routing_screen_about_hsi.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/repository/sub_screen_hsi_sections_helper.dart';
-import 'package:provider/provider.dart';
 
 class AboutHsiSubScreen extends StatefulWidget {
   final int id;
@@ -64,9 +62,10 @@ class _AboutHsiSubScreenState extends State<AboutHsiSubScreen> {
 
   void _navigateToScreen(int? id, BuildContext context, GeneralInfo league) {
     if (id == null) {
+      print('League ID is null');
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('League ID is missing')));
+      ).showSnackBar(SnackBar(content: Text('League ID is null')));
       return;
     }
 
@@ -83,15 +82,6 @@ class _AboutHsiSubScreenState extends State<AboutHsiSubScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

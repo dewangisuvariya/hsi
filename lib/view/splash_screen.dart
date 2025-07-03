@@ -54,6 +54,7 @@ class _SplashScreenState extends State<SplashScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: Colors.white,
       body: Column(
         children: [
           AnimatedOpacity(
@@ -81,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
           ),
-          Expanded(child: Container(color: Colors.white)),
+          // Expanded(child: Container(color: Colors.white)),
         ],
       ),
     );

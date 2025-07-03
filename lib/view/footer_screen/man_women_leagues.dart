@@ -81,6 +81,77 @@ class _ManWomenLeaguesState extends State<ManWomenLeagues>
     super.dispose();
   }
 
+  Future<bool> _handleWillPop() async {
+    // Show confirmation dialog if on HomeScreen (index 3)
+    bool? shouldExit = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => AlertDialog(
+            contentPadding: EdgeInsets.all(30),
+            backgroundColor: appBarColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.r),
+            ),
+            content: Text(
+              'Ertu viss um að þú viljir hætta?',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontFamily: "Montserrat",
+                wordSpacing: 1,
+                fontWeight: FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: backgroundColorContainer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  minimumSize: Size(110.w, 32.h),
+                ),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(
+                  'Já',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    fontFamily: "Montserrat",
+                  ),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFA0A0A0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  minimumSize: Size(110.w, 32.h),
+                ),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  'Nei',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    fontFamily: "Montserrat",
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    return shouldExit ?? false;
+  }
+
   // create structure of the screen
   @override
   Widget build(BuildContext context) {

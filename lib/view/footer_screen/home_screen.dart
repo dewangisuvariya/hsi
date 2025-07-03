@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/Model/check_user_notification_status_model.dart';
@@ -6,7 +7,8 @@ import 'package:hsi/Model/notices_model.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/repository/Check_user_notification_status_helper.dart';
-import 'package:hsi/repository/fetch_latest_results_helper.dart';
+import 'package:hsi/repository/latest_results_helper.dart';
+import 'package:hsi/repository/log_activity_helper.dart';
 import 'package:hsi/repository/notices_helper.dart';
 import 'package:hsi/repository/user_notifications_mark_as_read_helper.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/video_player_screen.dart';
@@ -47,7 +49,30 @@ class _HomeScreenState extends State<HomeScreen> {
     fetchNotices();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAndShowNotifications();
+      _logUserActivity();
     });
+  }
+
+  // Add this new method to log user activity
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _logUserActivity(); // Log user activity when dependencies change
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _hideFooter = true; // Hide footer when disposing the widget
+  }
+
+  // Log user activity using the LogActivityApiHelper class.
+  Future<void> _logUserActivity() async {
+    try {
+      await LogActivityApiHelper.logUserActivity();
+    } catch (e) {
+      print("Error logging user activity: $e");
+    }
   }
 
   // Load data from the checkUserNotificationStatusHelper class via the web service.
@@ -170,6 +195,77 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  Future<bool> _handleWillPop() async {
+    // Show confirmation dialog if on HomeScreen (index 3)
+    bool? shouldExit = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder:
+          (context) => AlertDialog(
+            contentPadding: EdgeInsets.all(30),
+            backgroundColor: appBarColor,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.r),
+            ),
+            content: Text(
+              'Ertu viss um að þú viljir hætta?',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontFamily: "Montserrat",
+                wordSpacing: 1,
+                fontWeight: FontWeight.w400,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            actionsAlignment: MainAxisAlignment.center,
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: backgroundColorContainer,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  minimumSize: Size(110.w, 32.h),
+                ),
+                onPressed: () => Navigator.of(context).pop(true),
+                child: Text(
+                  'Já',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    fontFamily: "Montserrat",
+                  ),
+                ),
+              ),
+              SizedBox(width: 10.w),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFA0A0A0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4.r),
+                  ),
+                  minimumSize: Size(110.w, 32.h),
+                ),
+                onPressed: () => Navigator.of(context).pop(false),
+                child: Text(
+                  'Nei',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14.sp,
+                    fontFamily: "Montserrat",
+                  ),
+                ),
+              ),
+            ],
+          ),
+    );
+
+    return shouldExit ?? false;
+  }
+
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
@@ -179,239 +275,246 @@ class _HomeScreenState extends State<HomeScreen> {
     // );
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: backgroundColor,
-      drawer: SlideMenu(),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                Container(
-                  height: isLargeScreen ? 410.h : 220.h,
-                  color: backgroundColorContainer,
-                ),
-                Column(
-                  children: [
-                    SizedBox(height: isLargeScreen ? 50.h : 43.h),
-                    // Responsive header
-                    isLargeScreen
-                        ? _buildLargeScreenHeader()
-                        : _buildSmallScreenHeader(),
+    return WillPopScope(
+      onWillPop: _handleWillPop,
+      child: Scaffold(
+        key: _scaffoldKey,
+        backgroundColor: backgroundColor,
+        drawer: SlideMenu(),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  Container(
+                    height: isLargeScreen ? 410.h : 220.h,
+                    color: backgroundColorContainer,
+                  ),
+                  Column(
+                    children: [
+                      SizedBox(height: isLargeScreen ? 50.h : 43.h),
+                      // Responsive header
+                      isLargeScreen
+                          ? _buildLargeScreenHeader()
+                          : _buildSmallScreenHeader(),
 
-                    SizedBox(height: isLargeScreen ? 20.h : 4.h),
+                      SizedBox(height: isLargeScreen ? 20.h : 4.h),
 
-                    // Menu button
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.only(left: 34.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    // onTap: () {},
-                                    onTap: () async {
-                                      const url =
-                                          'https://www.youtube.com/c/HS%C3%8D_iceland';
-                                      if (await canLaunch(url)) {
-                                        await launch(url);
-                                      } else {
-                                        throw 'Could not launch $url';
-                                      }
-                                    },
-                                    child: Image.asset(
-                                      youtube,
-                                      width: 24.w,
-                                      height: 24.h,
-                                    ),
-                                  ),
-                                  SizedBox(width: 6.w),
-                                  GestureDetector(
-                                    // onTap: () {},
-                                    onTap: () async {
-                                      const url =
-                                          'https://www.instagram.com/hsi_iceland/';
-                                      if (await canLaunch(url)) {
-                                        await launch(url);
-                                      } else {
-                                        throw 'Could not launch $url';
-                                      }
-                                    },
-                                    child: Image.asset(
-                                      instagramHome,
-                                      width: 24.w,
-                                      height: 24.h,
-                                    ),
-                                  ),
-                                  SizedBox(width: 6.w),
-                                  GestureDetector(
-                                    // onTap: () {},
-                                    onTap: () async {
-                                      const url =
-                                          'https://www.tiktok.com/@hsiiceland';
-                                      if (await canLaunch(url)) {
-                                        await launch(url);
-                                      } else {
-                                        throw 'Could not launch $url';
-                                      }
-                                    },
-                                    child: Image.asset(
-                                      tiktok,
-                                      width: 24.w,
-                                      height: 24.h,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        Expanded(
-                          child: Container(
-                            alignment: Alignment.center,
-                            height: isLargeScreen ? 52.h : 26.h,
-                            // width: isLargeScreen ? 160.w : 100.w,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Color(0xFFFF141F),
-                                fixedSize:
-                                    isLargeScreen
-                                        ? Size(160.w, 52.h)
-                                        : Size(103.w, 26.h),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.r),
-                                  side: const BorderSide(
-                                    color: Colors.white,
-                                    width: 2,
-                                  ),
-                                ),
-                                // padding: EdgeInsets.zero,
-                              ),
-                              onPressed: () {
-                                _scaffoldKey.currentState?.openDrawer();
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    imageButton,
-                                    height: isLargeScreen ? 11.h : 7.h,
-                                    width: isLargeScreen ? 11.w : 7.w,
-                                  ),
-                                  SizedBox(width: isLargeScreen ? 10.w : 6.w),
-                                  Text(
-                                    "Í beinni",
-                                    style: drawerButtonStyle.copyWith(
-                                      fontSize: isLargeScreen ? 22.sp : 11.sp,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder:
-                                      (context) => ProfileDisplayScreen(
-                                        onLogout: widget.onLogout,
+                      // Menu button
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 34.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () async {
+                                        const url =
+                                            'https://www.youtube.com/c/HS%C3%8D_iceland';
+                                        if (await canLaunch(url)) {
+                                          await launch(url);
+                                        } else {
+                                          throw 'Could not launch $url';
+                                        }
+                                      },
+                                      // onTap:
+                                      //     () =>
+                                      //         FirebaseCrashlytics.instance
+                                      //             .crash(),
+                                      child: Image.asset(
+                                        youtube,
+                                        width: 24.w,
+                                        height: 24.h,
                                       ),
+                                    ),
+                                    SizedBox(width: 6.w),
+                                    GestureDetector(
+                                      // onTap: () {},
+                                      onTap: () async {
+                                        const url =
+                                            'https://www.instagram.com/hsi_iceland/';
+                                        if (await canLaunch(url)) {
+                                          await launch(url);
+                                        } else {
+                                          throw 'Could not launch $url';
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        instagramHome,
+                                        width: 24.w,
+                                        height: 24.h,
+                                      ),
+                                    ),
+                                    SizedBox(width: 6.w),
+                                    GestureDetector(
+                                      // onTap: () {},
+                                      onTap: () async {
+                                        const url =
+                                            'https://www.tiktok.com/@hsiiceland';
+                                        if (await canLaunch(url)) {
+                                          await launch(url);
+                                        } else {
+                                          throw 'Could not launch $url';
+                                        }
+                                      },
+                                      child: Image.asset(
+                                        tiktok,
+                                        width: 24.w,
+                                        height: 24.h,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              );
-                            },
-                            child: Image.asset(
-                              account,
-                              width: 24.w,
-                              height: 24.h,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
 
-                    SizedBox(height: isLargeScreen ? 30.h : 6.h),
-
-                    // Banner image
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        border: Border.all(
-                          color: textColorLeagueTile,
-                          width: 2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF000000).withOpacity(0.26),
-                            offset: const Offset(2, 2),
-                            blurRadius: 6,
-                            spreadRadius: 0,
+                          Expanded(
+                            child: Container(
+                              alignment: Alignment.center,
+                              height: isLargeScreen ? 52.h : 26.h,
+                              // width: isLargeScreen ? 160.w : 100.w,
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFFFF141F),
+                                  fixedSize:
+                                      isLargeScreen
+                                          ? Size(160.w, 52.h)
+                                          : Size(103.w, 26.h),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    side: const BorderSide(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  // padding: EdgeInsets.zero,
+                                ),
+                                onPressed: () {
+                                  _scaffoldKey.currentState?.openDrawer();
+                                  // FirebaseCrashlytics.instance.crash();
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      imageButton,
+                                      height: isLargeScreen ? 11.h : 7.h,
+                                      width: isLargeScreen ? 11.w : 7.w,
+                                    ),
+                                    SizedBox(width: isLargeScreen ? 10.w : 6.w),
+                                    Text(
+                                      "Í beinni",
+                                      style: drawerButtonStyle.copyWith(
+                                        fontSize: isLargeScreen ? 22.sp : 11.sp,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => ProfileDisplayScreen(
+                                          onLogout: widget.onLogout,
+                                        ),
+                                  ),
+                                );
+                              },
+                              child: Image.asset(
+                                account,
+                                width: 24.w,
+                                height: 24.h,
+                              ),
+                            ),
                           ),
                         ],
-
-                        borderRadius: BorderRadius.circular(20.r),
                       ),
-                      width: isLargeScreen ? 600.w : 355.w,
-                      height: isLargeScreen ? 300.h : 155.h,
 
-                      child: LiveFeedWidget(),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+                      SizedBox(height: isLargeScreen ? 30.h : 6.h),
 
-            SizedBox(height: isLargeScreen ? 30.h : 9.h),
+                      // Banner image
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: textColorLeagueTile,
+                            width: 2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFF000000).withOpacity(0.26),
+                              offset: const Offset(2, 2),
+                              blurRadius: 6,
+                              spreadRadius: 0,
+                            ),
+                          ],
 
-            isLargeScreen
-                ? _buildLargeScreenButtons(isLargeScreen)
-                : _buildSmallScreenButtons(isLargeScreen),
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        width: isLargeScreen ? 600.w : 355.w,
+                        height: isLargeScreen ? 300.h : 155.h,
 
-            if (!isLoading && notices.isNotEmpty)
-              _buildNoticeContainer(isLargeScreen, notices.first),
-            SizedBox(height: isLargeScreen ? 30.h : 10.h),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    "Nýjustu úrslit",
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Color(0xFF292929),
-                      fontWeight: FontWeight.w600,
-                      fontFamily: "Poppins",
-                    ),
-                  ),
-                  Text(
-                    "Fleiri úrslit",
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: Color(0xFFF28E2B),
-                      fontWeight: FontWeight.w500,
-                      fontFamily: "Poppins",
-                    ),
+                        child: LiveFeedWidget(),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Divider(color: Color(0xFFE3E3E3), thickness: 1.5),
-            ),
-            // SizedBox(height: isLargeScreen ? 30.h : 4.h),
-            SizedBox(height: 75.h, child: MatchListView()),
-            SizedBox(height: isLargeScreen ? 30.h : 4.h),
-          ],
+
+              SizedBox(height: isLargeScreen ? 30.h : 9.h),
+
+              isLargeScreen
+                  ? _buildLargeScreenButtons(isLargeScreen)
+                  : _buildSmallScreenButtons(isLargeScreen),
+
+              if (!isLoading && notices.isNotEmpty)
+                _buildNoticeContainer(isLargeScreen, notices.first),
+              SizedBox(height: isLargeScreen ? 30.h : 10.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Nýjustu úrslit",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Color(0xFF292929),
+                        fontWeight: FontWeight.w600,
+                        fontFamily: "Poppins",
+                      ),
+                    ),
+                    Text(
+                      "Fleiri úrslit",
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Color(0xFFF28E2B),
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Poppins",
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                child: Divider(color: Color(0xFFE3E3E3), thickness: 1.5),
+              ),
+              // SizedBox(height: isLargeScreen ? 30.h : 4.h),
+              SizedBox(height: 78.h, child: MatchListView()),
+              SizedBox(height: isLargeScreen ? 30.h : 4.h),
+            ],
+          ),
         ),
       ),
     );
@@ -583,10 +686,11 @@ class _HomeScreenState extends State<HomeScreen> {
             horizontal: isLargeScreen ? 30.w : 20.w,
           ),
         ),
+
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(
+            Expanded(
               child: Row(
                 children: [
                   Image.asset(
@@ -595,16 +699,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     height: isLargeScreen ? 48.22.h : 26.h,
                   ),
                   SizedBox(width: isLargeScreen ? 8.w : 10.w),
-                  Text(
-                    title,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: isLargeScreen ? 20.97.sp : 16.sp,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: "Poppins",
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: isLargeScreen ? 20.97.sp : 16.sp,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: "Poppins",
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
@@ -761,6 +867,8 @@ class _MatchListViewState extends State<MatchListView> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Container(
+            height: 20.h,
+
             decoration: BoxDecoration(color: Color(0xFF005496)),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -836,10 +944,11 @@ class _MatchListViewState extends State<MatchListView> {
     return imageUrl.isNotEmpty
         ? Image.network(
           imageUrl,
-          width: 39.9.w,
-          height: 34.78.h,
+          width: 36.9.w,
+          height: 33.78.h,
           errorBuilder:
-              (context, error, stackTrace) => _buildPlaceholder(clubName),
+              // (context, error, stackTrace) => _buildPlaceholder(clubName),
+              (context, error, stackTrace) => errorImageContainer(),
         )
         : _buildPlaceholder(clubName);
   }

@@ -1,14 +1,12 @@
 import 'package:flutter_widget_from_html_core/flutter_widget_from_html_core.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/Model/fetch_about_hsi_details_model.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/custom_appbar_subscreen.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
-import 'package:hsi/repository/fecth_about_hsi_details_helper.dart';
+import 'package:hsi/repository/about_hsi_details_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,6 +40,14 @@ class _ActsOfParliamentScreenState extends State<ActsOfParliamentScreen> {
   @override
   void initState() {
     super.initState();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
+    //     context,
+    //     listen: false,
+    //   );
+
+    //   backgroundColorProvider.updateBackgroundColor(Color(0xFF000000));
+    // });
     _loadData();
   }
 
@@ -189,17 +195,8 @@ class _ActsOfParliamentScreenState extends State<ActsOfParliamentScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(const Color(0xFFFAFAFA));
-    });
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(
@@ -213,15 +210,7 @@ class _ActsOfParliamentScreenState extends State<ActsOfParliamentScreen> {
                     isLoading
                         ? Center(child: loadingAnimation)
                         : errorMessage != null
-                        ? Center(
-                          child: Text(
-                            "",
-                            style: const TextStyle(
-                              color: Colors.red,
-                              fontSize: 18,
-                            ),
-                          ),
-                        )
+                        ? Center(child: SizedBox.shrink())
                         : SingleChildScrollView(
                           padding: const EdgeInsets.all(16.0),
                           child: Container(

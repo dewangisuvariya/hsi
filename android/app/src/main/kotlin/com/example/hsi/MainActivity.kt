@@ -1,4 +1,4 @@
-package com.example.hsi
+package com.handknattleikssamband.hsi
 
 import io.flutter.embedding.android.FlutterActivity
 

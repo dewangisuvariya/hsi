@@ -328,7 +328,7 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
       imageUrl,
       width: widget.width,
       height: widget.height,
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       loadingBuilder: (context, child, loadingProgress) {
         return loadingProgress == null
             ? child

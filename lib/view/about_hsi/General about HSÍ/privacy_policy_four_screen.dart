@@ -5,9 +5,7 @@ import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/custom_appbar_subscreen.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
-import 'package:hsi/repository/fecth_about_hsi_details_helper.dart';
-import 'package:provider/provider.dart';
+import 'package:hsi/repository/about_hsi_details_helper.dart';
 
 // load Privacy Policy details from web server
 // and display those within this screen
@@ -80,17 +78,8 @@ class _PrivacyPolicyFourScreenState extends State<PrivacyPolicyFourScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
-      backgroundColor: Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(
@@ -112,16 +101,7 @@ class _PrivacyPolicyFourScreenState extends State<PrivacyPolicyFourScreen> {
   // Displaying the privacy policy in a custom widget with toggle functionality
   Widget _buildContent() {
     if (_errorMessage.isNotEmpty) {
-      return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text(
-            "",
-            style: const TextStyle(color: Colors.red),
-            textAlign: TextAlign.center,
-          ),
-        ),
-      );
+      return Center(child: SizedBox.shrink());
     }
 
     return SingleChildScrollView(

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "94109248921",
+    "project_id": "hsi-project-88352",
+    "storage_bucket": "hsi-project-88352.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:94109248921:android:ee3ca6ce5994a36bc5f708",
+        "android_client_info": {
+          "package_name": "com.handknattleikssamband.hsi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArCdGI-spz5Z7tQFLp-5dp8yf6WgrE0-k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

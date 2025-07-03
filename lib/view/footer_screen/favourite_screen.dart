@@ -123,78 +123,267 @@ class _FavoriteScreenState extends State<FavoriteScreen>
   }
 
   // create structure of the screen
+  // @override
+  // Widget build(BuildContext context) {
+  //   // final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
+  //   //   context,
+  //   //   listen: true,
+  //   // );
+
+  //   final screenHeight = MediaQuery.of(context).size.height;
+  //   final screenWidth = MediaQuery.of(context).size.width;
+
+  //   return Scaffold(
+  //     backgroundColor: backgroundColor,
+  //     body: Container(
+  //       child: Stack(
+  //         children: [
+  //           Column(
+  //             children: [
+  //               CustomAppBar(title: "Uppáhalds", imagePath: favourite),
+  //               Expanded(
+  //                 child:
+  //                     _isLoading
+  //                         ? Center(child: loadingAnimation)
+  //                         : _favoriteClubs.isEmpty
+  //                         ? Center(child: Text("No favorite clubs found"))
+  //                         : _leagueList(screenHeight, screenWidth),
+  //               ),
+  //             ],
+  //           ),
+  //           Positioned(
+  //             bottom: 16.h,
+  //             left: 0,
+  //             right: 0,
+  //             child: Center(
+  //               child: ElevatedButton(
+  //                 onPressed: () async {
+  //                   final result = await Navigator.push(
+  //                     context,
+  //                     MaterialPageRoute(
+  //                       builder: (context) => AddToFavouritesScreen(),
+  //                     ),
+  //                   );
+
+  //                   if (result == true && mounted) {
+  //                     _loadFavoriteClubs();
+  //                   }
+  //                 },
+  //                 style: ElevatedButton.styleFrom(
+  //                   fixedSize: Size(250.w, 54.h),
+  //                   backgroundColor: appBarColor,
+  //                   foregroundColor: Colors.black,
+  //                   elevation: 0,
+  //                   shape: RoundedRectangleBorder(
+  //                     borderRadius: BorderRadius.circular(29.r),
+  //                   ),
+  //                 ),
+  //                 child: Row(
+  //                   mainAxisSize: MainAxisSize.min,
+  //                   children: [
+  //                     Image.asset(favouritesIcon, width: 26.w, height: 26.h),
+  //                     SizedBox(width: 10.w),
+  //                     Text(
+  //                       "Bæta við uppáhalds",
+  //                       style: TextStyle(
+  //                         fontSize: 16.sp,
+  //                         fontWeight: FontWeight.w500,
+  //                         fontFamily: "Poppins",
+  //                         color: Colors.white,
+  //                       ),
+  //                     ),
+  //                   ],
+  //                 ),
+  //               ),
+  //             ),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+  // @override
+  // Widget build(BuildContext context) {
+  //   final screenHeight = MediaQuery.of(context).size.height;
+  //   final screenWidth = MediaQuery.of(context).size.width;
+
+  //   final crossAxisCount = MediaQuery.of(context).size.width > 600 ? 3 : 2;
+  //   final itemsPerRow = crossAxisCount;
+  //   final hasLessThanTwoRows = _favoriteClubs.length <= itemsPerRow * 2;
+  //   return Scaffold(
+  //     backgroundColor: backgroundColor,
+  //     body: Column(
+  //       children: [
+  //         CustomAppBar(title: "Uppáhalds", imagePath: favourite),
+  //         Expanded(
+  //           child:
+  //               _isLoading
+  //                   ? Center(child: loadingAnimation)
+  //                   : _favoriteClubs.isEmpty
+  //                   ? Column(
+  //                     mainAxisAlignment: MainAxisAlignment.center,
+  //                     children: [
+  //                       Text("No favorite clubs found"),
+  //                       SizedBox(height: 20.h),
+  //                       _buildAddButton(),
+  //                     ],
+  //                   )
+  //                   : CustomScrollView(
+  //                     slivers: [
+  //                       SliverPadding(
+  //                         padding: EdgeInsets.symmetric(
+  //                           horizontal: 12.w,
+  //                           vertical: 8.h,
+  //                         ),
+  //                         sliver: SliverGrid(
+  //                           delegate: SliverChildBuilderDelegate((
+  //                             context,
+  //                             index,
+  //                           ) {
+  //                             final club = _favoriteClubs[index];
+  //                             return _leagueTile(
+  //                               club,
+  //                               screenHeight,
+  //                               screenWidth,
+  //                               index,
+  //                             );
+  //                           }, childCount: _favoriteClubs.length),
+  //                           gridDelegate:
+  //                               SliverGridDelegateWithFixedCrossAxisCount(
+  //                                 crossAxisCount:
+  //                                     MediaQuery.of(context).size.width > 600
+  //                                         ? 3
+  //                                         : 2,
+  //                                 crossAxisSpacing: 5,
+  //                                 mainAxisSpacing: 10,
+  //                               ),
+  //                         ),
+  //                       ),
+  //                       SliverToBoxAdapter(
+  //                         child: Padding(
+  //                           padding: EdgeInsets.symmetric(vertical: 16.h),
+  //                           child: _buildAddButton(),
+  //                         ),
+  //                       ),
+  //                     ],
+  //                   ),
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    // final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-    //   context,
-    //   listen: true,
-    // );
-
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 
+    // Calculate if we have less than 2 rows of items
+    final crossAxisCount = MediaQuery.of(context).size.width > 600 ? 3 : 2;
+    final itemsPerRow = crossAxisCount;
+    final hasLessThanTwoRows = _favoriteClubs.length <= itemsPerRow * 2;
+
     return Scaffold(
       backgroundColor: backgroundColor,
-      body: Container(
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                CustomAppBar(title: "Uppáhalds", imagePath: favourite),
-                Expanded(
-                  child:
-                      _isLoading
-                          ? Center(child: loadingAnimation)
-                          : _favoriteClubs.isEmpty
-                          ? Center(child: Text("No favorite clubs found"))
-                          : _leagueList(screenHeight, screenWidth),
-                ),
-              ],
-            ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              CustomAppBar(title: "Uppáhalds", imagePath: favourite),
+              Expanded(
+                child:
+                    _isLoading
+                        ? Center(child: loadingAnimation)
+                        : _favoriteClubs.isEmpty
+                        ? Center(child: Text("No favorite clubs found"))
+                        : CustomScrollView(
+                          slivers: [
+                            SliverPadding(
+                              padding: EdgeInsets.only(
+                                left: 12.w,
+                                right: 12.w,
+                                top: 8.h,
+                              ),
+                              sliver: SliverGrid(
+                                delegate: SliverChildBuilderDelegate((
+                                  context,
+                                  index,
+                                ) {
+                                  final club = _favoriteClubs[index];
+                                  return _leagueTile(
+                                    club,
+                                    screenHeight,
+                                    screenWidth,
+                                    index,
+                                  );
+                                }, childCount: _favoriteClubs.length),
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: crossAxisCount,
+                                      crossAxisSpacing: 5,
+                                      mainAxisSpacing: 10,
+                                    ),
+                              ),
+                            ),
+                            // Only show in SliverToBoxAdapter if more than 2 rows
+                            if (!hasLessThanTwoRows)
+                              SliverToBoxAdapter(
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.h),
+                                  child: _buildAddButton(),
+                                ),
+                              ),
+                          ],
+                        ),
+              ),
+            ],
+          ),
+          // Show positioned button if less than 2 rows
+          if (hasLessThanTwoRows && !_isLoading && _favoriteClubs.isNotEmpty)
             Positioned(
               bottom: 16.h,
               left: 0,
               right: 0,
-              child: Center(
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final result = await Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => AddToFavouritesScreen(),
-                      ),
-                    );
+              child: Center(child: _buildAddButton()),
+            ),
+        ],
+      ),
+    );
+  }
 
-                    if (result == true && mounted) {
-                      _loadFavoriteClubs();
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    fixedSize: Size(250.w, 54.h),
-                    backgroundColor: appBarColor,
-                    foregroundColor: Colors.black,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(29.r),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Image.asset(favouritesIcon, width: 26.w, height: 26.h),
-                      SizedBox(width: 10.w),
-                      Text(
-                        "Bæta við uppáhalds",
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: "Poppins",
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+  Widget _buildAddButton() {
+    return Center(
+      child: ElevatedButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => AddToFavouritesScreen()),
+          );
+          if (result == true && mounted) {
+            _loadFavoriteClubs();
+          }
+        },
+        style: ElevatedButton.styleFrom(
+          fixedSize: Size(250.w, 54.h),
+          backgroundColor: appBarColor,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(29.r),
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(favouritesIcon, width: 26.w, height: 26.h),
+            SizedBox(width: 10.w),
+            Text(
+              "Bæta við uppáhalds",
+              style: TextStyle(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w500,
+                fontFamily: "Poppins",
+                color: Colors.white,
               ),
             ),
           ],
@@ -253,7 +442,13 @@ class _FavoriteScreenState extends State<FavoriteScreen>
                   child: Container(
                     height: 55.h,
                     width: 55.w,
-                    child: Image.network(club.clubImage, fit: BoxFit.contain),
+                    child: Image.network(
+                      club.clubImage,
+                      fit: BoxFit.contain,
+                      errorBuilder: (context, error, stackTrace) {
+                        return errorImageContainer();
+                      },
+                    ),
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.020),
