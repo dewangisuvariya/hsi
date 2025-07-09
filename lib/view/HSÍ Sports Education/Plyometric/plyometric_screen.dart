@@ -5,10 +5,8 @@ import 'package:hsi/custom/custom_appbar_subscreen.dart';
 import 'package:hsi/custom/leagueTile_Widget.dart';
 import 'package:hsi/custom/leagueTile_tab.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/repository/sport_education_details_helper.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/core%20Training%20and%20Plyometric%20video%20screen/core_training_and_plyometric_video_list_screen.dart';
-import 'package:provider/provider.dart';
 
 // load plyometric details from web server
 // and display those within this screen
@@ -179,14 +177,6 @@ class _PlyometricScreenState extends State<PlyometricScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

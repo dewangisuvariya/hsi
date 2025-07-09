@@ -5,9 +5,7 @@ import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
 import 'package:hsi/repository/sub_screen_hsi_sections_helper.dart';
-import 'package:provider/provider.dart';
 import '../../custom/custom_appbar_subscreen.dart';
-import '../../provider/BackgroundColorProvider.dart';
 import '../partner_club/partner_club_detail.dart';
 
 // load Partner Sports Club List details from web server
@@ -70,15 +68,6 @@ class _AoildarfelogHsi extends State<AoildarfelogHsi> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
 

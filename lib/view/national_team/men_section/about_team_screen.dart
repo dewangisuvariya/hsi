@@ -78,7 +78,7 @@ class _AboutTeamScreenState extends State<AboutTeamScreen> {
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(

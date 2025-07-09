@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/const/style_manager.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/view/boys_girls_leagues/static/next_game_static_screen.dart';
 import 'package:hsi/view/boys_girls_leagues/static/result_static_screen.dart';
 
 import 'package:hsi/view/man_women_leagues/stand_screen.dart';
-import 'package:provider/provider.dart';
 
 // load juniour boy category - Standings details from web server
 // and display those within this screen
@@ -80,15 +78,6 @@ class _BoyGirlLeagueDetailScreenState extends State<BoyGirlLeagueDetailScreen>
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Column(

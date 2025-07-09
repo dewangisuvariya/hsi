@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/national_team_week.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:provider/provider.dart';
 import '../../../Model/national_team_category_model.dart';
 import '../../../custom/custom_appbar_subscreen.dart';
-import '../../../provider/BackgroundColorProvider.dart';
 import '../../../repository/national_team_category_helper.dart';
 
 // load coaches from beginning for men details from web server
@@ -73,16 +71,8 @@ class _CoachesFromBeginningScreenState
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(const Color(0xFFFAFAFA));
-    });
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(

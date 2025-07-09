@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
-import 'package:provider/provider.dart';
 import '../../Model/partner_club_detail_model.dart';
 import '../../repository/partner_club_detail_helper.dart';
 
@@ -74,14 +72,6 @@ class _ClubPartnerManagerInfoScreenState
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return FutureBuilder<List<PartnerClubDetailModel>>(
       future: _futureClubPartners,
       builder: (context, snapshot) {

@@ -7,9 +7,7 @@ import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/custom_appbar_subscreen.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/repository/sport_instructions_details_helper.dart';
-import 'package:provider/provider.dart';
 
 // load important points details from web server
 // and display those within this screen
@@ -89,17 +87,8 @@ class _ImportantPointsScreenState extends State<ImportantPointsScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(const Color(0xFFFAFAFA));
-    });
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(

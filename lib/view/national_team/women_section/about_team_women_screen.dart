@@ -76,7 +76,7 @@ class _AboutTeamWomenScreenState extends State<AboutTeamWomenScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(

@@ -3,12 +3,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import '../../../Model/national_team_category_model.dart';
 import '../../../Model/tournament_matches_list_model.dart';
 import '../../../custom/custom_appbar_subscreen.dart';
 import '../../../repository/national_team_category_helper.dart';
-import 'package:provider/provider.dart';
 import '../../../repository/tournament_matches_list_helper.dart';
 
 // load success at major tournaments men details from web server
@@ -89,14 +87,6 @@ class _SuccessAtMajorTournamentsState extends State<SuccessAtMajorTournaments> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Column(

@@ -1,29 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
+import 'package:hsi/custom/custom_appbar_subscreen_Image_asset.dart';
 import 'package:hsi/custom/leagueTile_tab.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
 import 'package:hsi/view/boys_girls_leagues/static/girl_boy_league_screen.dart';
-import 'package:provider/provider.dart';
-import '../../custom/custom_appbar.dart';
 import '../../custom/leagueTile_Widget.dart';
-import '../../provider/BackgroundColorProvider.dart';
 import '../../repository/boys_girls_league_helper.dart';
 import '../boys_girls_leagues/boy_girl_league_screen.dart';
 
 // load boy girl leagues details from web server
 // and display those within this screen
 // from other class, data is passed to this screen via constructor call
-class MotamalYangiriflokkarLeagePage extends StatefulWidget {
-  const MotamalYangiriflokkarLeagePage({super.key});
+class BoyGirlLeaguesScreen extends StatefulWidget {
+  const BoyGirlLeaguesScreen({super.key});
 
   @override
-  State<MotamalYangiriflokkarLeagePage> createState() =>
-      _MotamalYangiriflokkarLeagePageState();
+  State<BoyGirlLeaguesScreen> createState() => _BoyGirlLeaguesScreenState();
 }
 
-class _MotamalYangiriflokkarLeagePageState
-    extends State<MotamalYangiriflokkarLeagePage> {
+class _BoyGirlLeaguesScreenState extends State<BoyGirlLeaguesScreen> {
   final BoysGirlsLeage _compitionRepo = BoysGirlsLeage();
 
   bool isLoading = true;
@@ -220,21 +216,13 @@ class _MotamalYangiriflokkarLeagePageState
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(
             children: [
-              CustomAppBar(
+              CustomAppBarSubImageAsset(
                 title: "Mótamál - yngri flokkar",
                 imagePath: nationalTeam,
               ),

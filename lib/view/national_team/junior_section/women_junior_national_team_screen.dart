@@ -80,7 +80,7 @@ class _WomenJuniorNationalTeamScreenState
     final screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: Color(0xFFFAFAFA),
+      backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(

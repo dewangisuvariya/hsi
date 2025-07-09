@@ -92,67 +92,6 @@ class _ToggleFavouriteTeamScreenState extends State<ToggleFavouriteTeamScreen> {
     });
   }
 
-  // Future<void> _saveSelectedTeams() async {
-  //   setState(() => _isLoading = true);
-  //   try {
-  //     final userId = await UserProfileApi.getUserId();
-  //     if (userId == null) throw Exception('User ID not found');
-
-  //     final apiHelper = FavouriteTeamApiHelper();
-
-  //     // First get current state from server to know which teams to toggle
-  //     final userProfile = await UserProfileApi.fetchUserProfile();
-  //     final currentClub = userProfile.data.favouriteClubs.firstWhere(
-  //       (club) => club.clubId == widget.clubId,
-  //       orElse:
-  //           () => FavouriteClub(
-  //             clubId: widget.clubId!,
-  //             clubName: '',
-  //             clubImage: '',
-  //             favouriteTeams: [],
-  //           ),
-  //     );
-
-  //     final currentTeamIds =
-  //         currentClub.favouriteTeams.map((t) => t.teamId).toSet();
-  //     final newTeamIds = _selectedTeamIds.toSet();
-
-  //     // Teams to add (in new but not in current)
-  //     final teamsToAdd = newTeamIds.difference(currentTeamIds);
-  //     // Teams to remove (in current but not in new)
-  //     final teamsToRemove = currentTeamIds.difference(newTeamIds);
-
-  //     // Toggle all teams that need changing
-  //     for (final teamId in teamsToAdd) {
-  //       await apiHelper.toggleFavouriteTeam(
-  //         userId: userId,
-  //         clubId: widget.clubId!,
-  //         teamId: teamId,
-  //       );
-  //     }
-
-  //     for (final teamId in teamsToRemove) {
-  //       await apiHelper.toggleFavouriteTeam(
-  //         userId: userId,
-  //         clubId: widget.clubId!,
-  //         teamId: teamId,
-  //       );
-  //     }
-
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Favourite teams updated successfully')),
-  //     );
-
-  //     Navigator.pop(context, true); // Return true to indicate success
-  //   } catch (e) {
-  //     ScaffoldMessenger.of(
-  //       context,
-  //     ).showSnackBar(SnackBar(content: Text('Error saving teams: $e')));
-  //   } finally {
-  //     setState(() => _isLoading = false);
-  //   }
-  // }
-
   // When the user adds this team to the favorite team list, call the UserProfileHelper class via the web service
   Future<void> _saveSelectedTeams() async {
     setState(() => _isLoading = true);

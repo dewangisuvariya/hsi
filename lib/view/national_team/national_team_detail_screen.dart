@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:provider/provider.dart';
 import '../../Model/national_team_detail_model.dart';
 import '../../custom/custom_appbar_subscreen.dart';
 import '../../custom/leagueTile_Widget.dart';
 import '../../custom/routing_screen_national_team.dart';
-import '../../provider/BackgroundColorProvider.dart';
 import '../../repository/national_team_detail_helper.dart';
 
 // load national team details from web server
@@ -89,13 +87,6 @@ class _NationalTeamDetailScreenState extends State<NationalTeamDetailScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

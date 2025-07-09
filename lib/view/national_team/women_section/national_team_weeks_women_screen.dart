@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:provider/provider.dart';
 import '../../../Model/national_team_category_model.dart';
 import '../../../custom/custom_appbar_subscreen.dart';
 import '../../../custom/national_team_week.dart';
-import '../../../provider/BackgroundColorProvider.dart';
 import '../../../repository/national_team_category_helper.dart';
 
 // load national team week women details from web server
@@ -74,15 +72,6 @@ class _NationalTeamWeeksWomenScreenState
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

@@ -5,8 +5,6 @@ import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
 import '../../repository/partner_club_detail_helper.dart';
 import '../../custom/custom_appbar_subscreen.dart';
-import '../../provider/BackgroundColorProvider.dart';
-import 'package:provider/provider.dart';
 import 'club_partner_manager_info_screen.dart';
 import 'coach_list_screen.dart';
 
@@ -99,15 +97,6 @@ class _PartnerClubDetail extends State<PartnerClubDetail>
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

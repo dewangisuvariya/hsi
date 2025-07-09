@@ -3,10 +3,8 @@ import 'package:hsi/Model/sub_sectiono_about_hsi_model.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
 import 'package:hsi/repository/sub_screen_hsi_sections_helper.dart';
-import 'package:provider/provider.dart';
 import '../../custom/custom_appbar_subscreen.dart';
 import '../../custom/leagueTile_Widget.dart';
-import '../../provider/BackgroundColorProvider.dart';
 import '../national_team/national_team_detail_screen.dart';
 // load  National team details from web server
 // and display those within this screen
@@ -68,15 +66,6 @@ class _LandslioScreenState extends State<LandslioScreen> {
 
   // create structure of the screen
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

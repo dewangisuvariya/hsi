@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
-import 'package:hsi/custom/custom_appbar.dart';
+import 'package:hsi/custom/custom_appbar_subscreen_Image_asset.dart';
 import 'package:hsi/custom/leagueTile_Widget.dart';
 import 'package:hsi/custom/leagueTile_tab.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
@@ -10,8 +10,6 @@ import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Core%20Training/core_trai
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Instructions/instructions_screen.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Plyometric/plyometric_screen.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Strenght%20Training/strenght_training_screen.dart';
-import 'package:provider/provider.dart';
-import '../../provider/BackgroundColorProvider.dart';
 import 'package:hsi/Model/sports_education_model.dart';
 // load Sport Education details from web server
 // and display those within this screen
@@ -248,21 +246,16 @@ class _DagatalHsiScreenState extends State<DagatalHsiScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(
             children: [
-              CustomAppBar(title: "Íþróttafræðsla HSÍ", imagePath: data),
+              CustomAppBarSubImageAsset(
+                title: "Íþróttafræðsla HSÍ",
+                imagePath: data,
+              ),
               Expanded(
                 child:
                     isLoading

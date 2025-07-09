@@ -396,6 +396,13 @@ class _NewScreenState extends State<NewScreen> {
   int _lastPositionInGroup = 0;
   int _currentVisibleItemCount = 0;
   int _totalGroups = 1;
+  final List<String> backgroundImages = [
+    imageOne,
+    imageTwo,
+    imageThree,
+    imageFour,
+    imageFive,
+  ];
 
   final List<Map<String, dynamic>> adConfigurations = [
     {'color': Colors.blue.shade400, 'mediaUrl': imageOne},
@@ -421,7 +428,84 @@ class _NewScreenState extends State<NewScreen> {
     super.dispose();
   }
 
+  int _backgroundImageIndex = 0;
+  // void _handleScroll() {
+  //   final scrollOffset = _scrollController.position.pixels;
+  //   final approxItemHeight = 130.h;
+  //   final approxAdHeight = 500.h;
+
+  //   double totalHeight = 0;
+  //   int currentNewsIndex = 0;
+  //   int newsCount = newsItems.length;
+  //   int visibleCount = 0;
+
+  //   for (int i = 0; i < newsCount;) {
+  //     if (totalHeight + approxItemHeight > scrollOffset) break;
+  //     totalHeight += approxItemHeight;
+  //     i++;
+  //     currentNewsIndex++;
+  //     visibleCount++;
+
+  //     if (i % 5 == 0 && i < newsCount) {
+  //       if (totalHeight + approxAdHeight > scrollOffset) break;
+  //       totalHeight += approxAdHeight;
+  //     }
+  //   }
+
+  //   currentNewsIndex = currentNewsIndex.clamp(0, newsCount - 1);
+
+  //   final int group = (currentNewsIndex / 6).floor() + 1;
+  //   final int positionInGroup = (currentNewsIndex % 5) + 1;
+  //   final int rangeStart = (group - 1) * 6 + 1;
+  //   final int rangeEnd = min(group * 6, newsCount);
+  //   final String itemRange = "$rangeStart-$rangeEnd";
+
+  //   bool enteredNewGroup = _currentGroup != group;
+  //   bool wasInFirstHalf = _lastPositionInGroup < 3;
+  //   bool isInSecondHalf = positionInGroup > 3;
+  //   bool crossedHalfwayPoint = wasInFirstHalf && isInSecondHalf;
+
+  //   bool shouldUpdateAd =
+  //       (enteredNewGroup && group > 1) || (group > 1 && crossedHalfwayPoint);
+
+  //   setState(() {
+  //     _currentGroup = group;
+  //     _lastPositionInGroup = positionInGroup - 1;
+  //     _currentItemRange = itemRange;
+  //     _visibleNewsStart = (group - 1) * 6;
+  //     _currentVisibleItemCount = visibleCount;
+  //     _totalGroups = (newsCount / 6).ceil();
+
+  //     if (shouldUpdateAd) {
+  //       _currentAdIndex = (_currentAdIndex + 1) % adConfigurations.length;
+  //     } else if (enteredNewGroup && group == 1) {
+  //       _currentAdIndex = 0;
+  //     }
+  //   });
+  // }
+
   void _handleScroll() {
+    double offset = _scrollController.offset;
+
+    // Each section: 3 news items + 1 ad box
+    double newsItemHeight = 130.h; // approximate height of a news item
+    double adBoxHeight = 300.h; // height of ad box
+    double oneSectionHeight = (newsItemHeight * 3) + adBoxHeight;
+
+    // Calculate which section is currently at top
+    int sectionIndex = (offset / oneSectionHeight).floor();
+
+    // Use modulo to cycle through all 7 ad configurations
+    int newBannerIndex = sectionIndex % adConfigurations.length;
+
+    if (newBannerIndex != _currentAdIndex) {
+      setState(() {
+        _currentAdIndex = newBannerIndex;
+        _backgroundImageIndex = newBannerIndex % backgroundImages.length;
+      });
+    }
+
+    // Keep the rest of the original logic for other UI updates
     final scrollOffset = _scrollController.position.pixels;
     final approxItemHeight = 130.h;
     final approxAdHeight = 500.h;
@@ -452,14 +536,6 @@ class _NewScreenState extends State<NewScreen> {
     final int rangeEnd = min(group * 6, newsCount);
     final String itemRange = "$rangeStart-$rangeEnd";
 
-    bool enteredNewGroup = _currentGroup != group;
-    bool wasInFirstHalf = _lastPositionInGroup < 3;
-    bool isInSecondHalf = positionInGroup > 3;
-    bool crossedHalfwayPoint = wasInFirstHalf && isInSecondHalf;
-
-    bool shouldUpdateAd =
-        (enteredNewGroup && group > 1) || (group > 1 && crossedHalfwayPoint);
-
     setState(() {
       _currentGroup = group;
       _lastPositionInGroup = positionInGroup - 1;
@@ -467,12 +543,6 @@ class _NewScreenState extends State<NewScreen> {
       _visibleNewsStart = (group - 1) * 6;
       _currentVisibleItemCount = visibleCount;
       _totalGroups = (newsCount / 6).ceil();
-
-      if (shouldUpdateAd) {
-        _currentAdIndex = (_currentAdIndex + 1) % adConfigurations.length;
-      } else if (enteredNewGroup && group == 1) {
-        _currentAdIndex = 0;
-      }
     });
   }
 
@@ -491,6 +561,9 @@ class _NewScreenState extends State<NewScreen> {
           const Duration(seconds: 15),
         ),
         NewsApiHelper.fetchHsiNews().timeout(const Duration(seconds: 15)),
+        NewsApiHelper.fetchHandkastidNews().timeout(
+          const Duration(seconds: 15),
+        ),
       ]);
 
       final combinedItems = [
@@ -498,6 +571,7 @@ class _NewScreenState extends State<NewScreen> {
         ...results[1],
         ...results[2],
         ...results[3],
+        ...results[4],
       ];
 
       combinedItems.sort((a, b) {
@@ -553,38 +627,70 @@ class _NewScreenState extends State<NewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Column(
         children: [
           CustomAppBar(title: "Fréttir", imagePath: news),
+
           // Add scroll position indicator container
-          // Container(
-          //   padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 16.w),
-          //   color: Colors.white,
-          //   child: Row(
-          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Expanded(
+          //   child: Stack(
           //     children: [
-          //       Text(
-          //         "Group $_currentGroup",
-          //         style: TextStyle(
-          //           fontSize: 14.sp,
-          //           fontWeight: FontWeight.bold,
-          //           color: Colors.black,
+          //       Positioned.fill(
+          //         child: _buildAdBannerContent(
+          //           adConfigurations[_currentAdIndex],
           //         ),
           //       ),
-          //       Text(
-          //         "Items: $_currentItemRange (${_currentVisibleItemCount})",
-          //         style: TextStyle(
-          //           fontSize: 14.sp,
-          //           fontWeight: FontWeight.bold,
-          //           color: Colors.black,
-          //         ),
+          //       CustomRefreshIndicator(
+          //         onRefresh: _refreshData,
+          //         child:
+          //             newsItems.isEmpty
+          //                 ? (isLoading
+          //                     ? Container(
+          //                       height: double.infinity,
+          //                       width: double.infinity,
+          //                       color: Colors.white,
+          //                       child: Center(child: loadingAnimation),
+          //                     )
+          //                     : Container(
+          //                       height: double.infinity,
+          //                       width: double.infinity,
+          //                       color: Colors.white,
+          //                       child: const Center(child: Text("")),
+          //                     ))
+          //                 : ListView.builder(
+          //                   controller: _scrollController,
+          //                   padding: EdgeInsets.only(top: 12.h),
+          //                   itemCount: (newsItems.length / 3).ceil() * 2,
+          //                   itemBuilder: (context, index) {
+          //                     if (index % 2 == 0) {
+          //                       final groupIndex = index ~/ 2;
+          //                       final startNewsIndex = groupIndex * 3;
+          //                       final endNewsIndex = min(
+          //                         startNewsIndex + 3,
+          //                         newsItems.length,
+          //                       );
+          //                       final remainingItems =
+          //                           newsItems.length - startNewsIndex;
+
+          //                       if (remainingItems <= 0)
+          //                         return const SizedBox();
+
+          //                       return Column(
+          //                         crossAxisAlignment: CrossAxisAlignment.start,
+          //                         children: List.generate(
+          //                           min(3, remainingItems),
+          //                           (i) => _buildNewsItem(
+          //                             newsItems[startNewsIndex + i],
+          //                           ),
+          //                         ),
+          //                       );
+          //                     } else {
+          //                       return SizedBox(height: 500.h);
+          //                     }
+          //                   },
+          //                 ),
           //       ),
           //     ],
           //   ),
@@ -592,11 +698,7 @@ class _NewScreenState extends State<NewScreen> {
           Expanded(
             child: Stack(
               children: [
-                Positioned.fill(
-                  child: _buildAdBannerContent(
-                    adConfigurations[_currentAdIndex],
-                  ),
-                ),
+                Positioned.fill(child: _buildBackgroundImage()),
                 CustomRefreshIndicator(
                   onRefresh: _refreshData,
                   child:
@@ -605,13 +707,13 @@ class _NewScreenState extends State<NewScreen> {
                               ? Container(
                                 height: double.infinity,
                                 width: double.infinity,
-                                color: Colors.white,
+                                color: Colors.transparent,
                                 child: Center(child: loadingAnimation),
                               )
                               : Container(
                                 height: double.infinity,
                                 width: double.infinity,
-                                color: Colors.white,
+                                color: Colors.transparent,
                                 child: const Center(child: Text("")),
                               ))
                           : ListView.builder(
@@ -642,7 +744,25 @@ class _NewScreenState extends State<NewScreen> {
                                   ),
                                 );
                               } else {
-                                return SizedBox(height: 500.h);
+                                // This is where we display the ad banner
+                                return SizedBox(
+                                  height: 300.h,
+                                  child: Center(
+                                    child: Container(
+                                      height: 140.h,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.symmetric(
+                                        horizontal: 16.w,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(
+                                          6.r,
+                                        ),
+                                        color: Colors.transparent,
+                                      ),
+                                    ),
+                                  ),
+                                );
                               }
                             },
                           ),
@@ -682,22 +802,48 @@ class _NewScreenState extends State<NewScreen> {
                     fit: BoxFit.cover,
                     errorBuilder:
                         (context, error, stackTrace) => Container(
-                          height: 180,
+                          height: 98.h,
+                          width: 120.w,
                           color: Colors.grey[200],
-                          child: Image.asset(errorImage),
+                          child: Image.asset(errorImage, fit: BoxFit.contain),
                         ),
                   ),
+                )
+              else
+                Container(
+                  height: 98.h,
+                  width: 120.w,
+                  color: Colors.grey[200],
+                  child: Image.asset(errorImage, fit: BoxFit.contain),
                 ),
+
               SizedBox(width: 12.w),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      newsItem.title,
-                      maxLines: 2,
-                      style: coachesNameTextStyle.copyWith(color: Colors.black),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          newsItem.title,
+                          maxLines: 2,
+                          style: coachesNameTextStyle.copyWith(
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 10.h),
+                        Text(
+                          newsItem.source,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w400,
+                            color: Color(0xFF1E1E1E),
+                            fontFamily: 'Poppins',
+                          ),
+                        ),
+                      ],
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -729,6 +875,19 @@ class _NewScreenState extends State<NewScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBackgroundImage() {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 500),
+      child: Image.asset(
+        adConfigurations[_currentAdIndex]['mediaUrl'],
+        key: ValueKey<int>(_currentAdIndex),
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
       ),
     );
   }

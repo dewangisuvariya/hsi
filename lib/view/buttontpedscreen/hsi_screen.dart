@@ -2,16 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:hsi/Model/hsi_model.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
-import 'package:hsi/custom/custom_appbar.dart';
+import 'package:hsi/custom/custom_appbar_subscreen_Image_asset.dart';
 import 'package:hsi/custom/leagueTile_Widget.dart';
 import 'package:hsi/custom/leagueTile_tab.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/repository/hsi_api_helper.dart';
 import 'package:hsi/view/about_hsi/about_hsi_sub_screen.dart';
 import 'package:hsi/view/about_hsi/national_team.dart';
 import 'package:hsi/view/about_hsi/partner_sports_club_list.dart';
-import 'package:provider/provider.dart';
 
 // load About Hsi  details from web server
 // and display those within this screen
@@ -172,21 +170,13 @@ class _AboutHsiScreenState extends State<AboutHsiScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
           Column(
             children: [
-              CustomAppBar(title: "HSÍ", imagePath: hsiHeader),
+              CustomAppBarSubImageAsset(title: "HSÍ", imagePath: hsiHeader),
               Expanded(child: _buildListLayout(context)),
             ],
           ),

@@ -7,10 +7,8 @@ import 'package:hsi/custom/leagueTile_Widget.dart';
 import 'package:hsi/custom/leagueTile_tab.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
 import 'package:hsi/custom/strenght_training_custom_sub_screen_appbar.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/repository/strength_group_details_helper.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Strenght%20Training/Strength%20training%20-%20U15/strength_training_U_fifteen_video_list_screen.dart';
-import 'package:provider/provider.dart';
 
 // load strenght training  UFifteen details from web server
 // and display those within this screen
@@ -188,14 +186,6 @@ class _StrengthTrainingUFifteenState extends State<StrengthTrainingUFifteen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

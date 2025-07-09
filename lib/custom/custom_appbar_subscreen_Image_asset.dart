@@ -3,11 +3,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 
-class CustomAppBarSubScreen extends StatelessWidget {
+class CustomAppBarSubImageAsset extends StatelessWidget {
   final String title;
   final String imagePath;
 
-  const CustomAppBarSubScreen({
+  const CustomAppBarSubImageAsset({
     Key? key,
     required this.title,
     required this.imagePath,
@@ -69,7 +69,7 @@ class CustomAppBarSubScreen extends StatelessWidget {
                       Container(
                         width: isLargeScreen ? 95.w : 52.w,
                         height: isLargeScreen ? 68.h : 36.h,
-                        child: Image.network(
+                        child: Image.asset(
                           imagePath,
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {

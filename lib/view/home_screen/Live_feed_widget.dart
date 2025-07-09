@@ -25,7 +25,8 @@ class LiveFeedWidget extends StatefulWidget {
   State<LiveFeedWidget> createState() => _LiveFeedWidgetState();
 }
 
-class _LiveFeedWidgetState extends State<LiveFeedWidget> {
+class _LiveFeedWidgetState extends State<LiveFeedWidget>
+    with WidgetsBindingObserver {
   final LiveFeedApiHelper _apiHelper = LiveFeedApiHelper();
   late Future<LiveFeedResponse> _liveFeedFuture;
   List<LiveFeedBanner> _banners = [];
@@ -35,11 +36,44 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
   bool _isVideoPlaying = false;
   bool _isVideoInitializing = false;
   Uint8List? _videoThumbnail;
+  bool _isPaused = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _initializeLiveFeed();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    // Handle app lifecycle changes to prevent background processing
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        _pausePlayback();
+        break;
+      case AppLifecycleState.resumed:
+        _resumePlayback();
+        break;
+      default:
+        break;
+    }
+  }
+
+  void _pausePlayback() {
+    _isPaused = true;
+    _playbackTimer?.cancel();
+    _videoController?.pause();
+  }
+
+  void _resumePlayback() {
+    if (_isPaused) {
+      _isPaused = false;
+      _playCurrentItem();
+    }
   }
 
   /// Initializes the live feed by:
@@ -54,7 +88,7 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
           _banners = LiveFeedBanner.sortByPosition(response.banners);
         });
         await _preloadThumbnails(); // Generate thumbnails for all videos
-        if (_banners.isNotEmpty)
+        if (_banners.isNotEmpty && !_isPaused)
           _startPlayback(); // Start playback if we have banners
       }
       return response;
@@ -100,7 +134,11 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
   /// - For videos: initializes player and starts playback
   /// - For images: shows for fixed duration then moves to next
   void _playCurrentItem() {
+    if (_isPaused) return; // Don't play if paused
+
     _cleanupPreviousMedia();
+    if (_banners.isEmpty) return;
+
     _currentIndex %= _banners.length;
 
     final currentBanner = _banners[_currentIndex];
@@ -119,6 +157,8 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
   /// 4. Starts playback when ready
   /// 5. Handles errors by moving to next item
   Future<void> _loadAndPlayVideo(LiveFeedBanner banner) async {
+    if (_isPaused) return;
+
     setState(() {
       _isVideoInitializing = true;
       _videoThumbnail = null;
@@ -135,7 +175,7 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
             ..setVolume(0)
             ..initialize()
                 .then((_) {
-                  if (!mounted) return;
+                  if (!mounted || _isPaused) return;
                   setState(() {
                     _isVideoPlaying = true;
                     _isVideoInitializing = false;
@@ -149,16 +189,20 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
                 .catchError((error) {
                   if (!mounted) return;
                   setState(() => _isVideoInitializing = false);
-                  _moveToNextItemAfterDelay(
-                    const Duration(seconds: 3),
-                  ); // On error, move to next
+                  if (!_isPaused) {
+                    _moveToNextItemAfterDelay(
+                      const Duration(seconds: 3),
+                    ); // On error, move to next
+                  }
                 });
     } catch (e) {
       if (!mounted) return;
       setState(() => _isVideoInitializing = false);
-      _moveToNextItemAfterDelay(
-        const Duration(seconds: 3),
-      ); // On error, move to next
+      if (!_isPaused) {
+        _moveToNextItemAfterDelay(
+          const Duration(seconds: 3),
+        ); // On error, move to next
+      }
     }
   }
 
@@ -180,7 +224,7 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
   ///
   /// Moves to next item when current video completes playback
   void _onVideoStateChanged() {
-    if (_videoController == null || !mounted) return;
+    if (_videoController == null || !mounted || _isPaused) return;
 
     final isVideoComplete =
         !_videoController!.value.isPlaying &&
@@ -191,11 +235,15 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
   }
 
   /// Shows an image for a fixed duration then moves to next item
-  void _showImage(String imageUrl) =>
+  void _showImage(String imageUrl) {
+    if (!_isPaused) {
       _moveToNextItemAfterDelay(const Duration(seconds: 3));
+    }
+  }
 
   /// Schedules moving to next item after a delay
   void _moveToNextItemAfterDelay(Duration delay) {
+    _playbackTimer?.cancel();
     _playbackTimer = Timer(delay, _moveToNextItem);
   }
 
@@ -203,7 +251,7 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
   ///
   /// Wraps around to beginning when reaching end
   void _moveToNextItem() {
-    if (!mounted) return;
+    if (!mounted || _isPaused) return;
     setState(() {
       _currentIndex = (_currentIndex + 1) % _banners.length;
       _isVideoPlaying = false;
@@ -213,6 +261,7 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _cleanupPreviousMedia();
     super.dispose();
   }
@@ -259,6 +308,9 @@ class _LiveFeedWidgetState extends State<LiveFeedWidget> {
 
   /// Builds the container for the current media item
   Widget _buildMediaContainer() {
+    if (_banners.isEmpty) {
+      return Container();
+    }
     final currentBanner = _banners[_currentIndex];
 
     return Container(

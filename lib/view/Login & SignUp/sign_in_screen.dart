@@ -73,8 +73,8 @@ class _SignInScreenState extends State<SignInScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(response.message),
-              duration: const Duration(seconds: 2),
+              content: Text('Login failed'),
+              duration: const Duration(seconds: 1),
               backgroundColor: Colors.red,
             ),
           );
@@ -90,7 +90,7 @@ class _SignInScreenState extends State<SignInScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Error: ${e.toString()}'),
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 1),
             backgroundColor: Colors.red,
           ),
         );

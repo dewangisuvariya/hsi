@@ -131,11 +131,6 @@ class _AddToFavouritesTeamsScreenState
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    // final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-    //   context,
-    //   listen: true,
-    // );
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

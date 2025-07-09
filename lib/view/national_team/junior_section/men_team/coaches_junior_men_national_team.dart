@@ -3,11 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import '../../../../Model/junior_national_team_week_model.dart';
 import '../../../../custom/custom_appbar_subscreen.dart';
 import '../../../../repository/junior_national_team_week_helper.dart';
-import 'package:provider/provider.dart';
 
 // load coaches for junior men national team details from web server
 // and display those within this screen
@@ -77,15 +75,6 @@ class _CoachesJuniorMenNationalTeamState
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

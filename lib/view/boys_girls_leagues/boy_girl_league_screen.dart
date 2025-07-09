@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:provider/provider.dart';
 import '../../Model/boys_girls_child_league_model.dart';
 import '../../custom/custom_appbar_subscreen.dart';
 import '../../custom/leagueTile_Widget.dart';
-import '../../provider/BackgroundColorProvider.dart';
 import '../../repository/boys-girls_child-leagues_helper.dart';
 
 // load Boy Girl League details from web server
@@ -75,14 +73,6 @@ class _BoyGirlLeagueScreenState extends State<BoyGirlLeagueScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

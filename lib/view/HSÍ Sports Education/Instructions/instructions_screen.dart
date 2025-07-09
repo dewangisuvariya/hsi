@@ -5,12 +5,10 @@ import 'package:hsi/custom/custom_appbar_subscreen.dart';
 import 'package:hsi/custom/leagueTile_Widget.dart';
 import 'package:hsi/custom/leagueTile_tab.dart';
 import 'package:hsi/custom/showNetworkErrorDialog.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/repository/sport_education_details_helper.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Instructions/active_rest_screen.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Instructions/important_points_screen.dart';
 import 'package:hsi/view/HS%C3%8D%20Sports%20Education/Instructions/load_management_screen.dart';
-import 'package:provider/provider.dart';
 
 // load instructions details from web server
 // and display those within this screen
@@ -215,14 +213,6 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: true,
-    );
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

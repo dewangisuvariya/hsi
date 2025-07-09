@@ -5,8 +5,6 @@ import 'package:hsi/const/resource_manager.dart';
 import 'package:hsi/const/style_manager.dart';
 import 'package:hsi/custom/custom_appbar_subscreen.dart';
 import 'package:hsi/view/Favourite_club/toggle_favourite_team_screen.dart';
-import 'package:provider/provider.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 // load Favorite Teams details from web server
 // and display those within this screen
 // from other class, data is passed to this screen via constructor call
@@ -72,15 +70,6 @@ class _FavouriteTeamsScreenState extends State<FavouriteTeamsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(

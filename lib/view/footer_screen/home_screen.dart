@@ -18,7 +18,7 @@ import 'package:hsi/view/slide_menu.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../buttontpedscreen/sports_education_screen.dart';
 import '../buttontpedscreen/statistics_screen.dart';
-import '../buttontpedscreen/boy_girl_leagues.dart';
+import '../buttontpedscreen/boy_girl_leagues_screen.dart';
 import '../buttontpedscreen/hsi_screen.dart';
 import 'package:intl/intl.dart';
 
@@ -269,10 +269,6 @@ class _HomeScreenState extends State<HomeScreen> {
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    // final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-    //   context,
-    //   listen: true,
-    // );
     final isLargeScreen = MediaQuery.of(context).size.width > 600;
 
     return WillPopScope(
@@ -557,7 +553,7 @@ class _HomeScreenState extends State<HomeScreen> {
           context: context,
           title: "Mótamál - yngri flokkar",
           icon: nationalTeam,
-          route: MotamalYangiriflokkarLeagePage(),
+          route: BoyGirlLeaguesScreen(),
           selected: _selectedIndex == 0,
           onSelected: (newIndex) => setState(() => _selectedIndex = newIndex),
           index: 0,
@@ -608,7 +604,7 @@ class _HomeScreenState extends State<HomeScreen> {
           context: context,
           title: "Motamal - yngri flokkar",
           icon: nationalTeam,
-          route: MotamalYangiriflokkarLeagePage(),
+          route: BoyGirlLeaguesScreen(),
           selected: _selectedIndex == 0,
           onSelected: (newIndex) => setState(() => _selectedIndex = newIndex),
           index: 0,

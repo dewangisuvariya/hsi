@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hsi/const/style_manager.dart';
-import 'package:hsi/provider/BackgroundColorProvider.dart';
 import 'package:hsi/view/man_women_leagues/result_screen.dart';
 import 'package:hsi/view/man_women_leagues/next_games_screen.dart';
 import 'package:hsi/view/man_women_leagues/stand_screen.dart';
-import 'package:provider/provider.dart';
 
 // load man women leagues details from web server
 // and display those within this screen
@@ -69,15 +67,6 @@ class _ManWomenLeaguesDetailScreenState
   // create structure of the screen
   @override
   Widget build(BuildContext context) {
-    final backgroundColorProvider = Provider.of<BackgroundColorProvider>(
-      context,
-      listen: false,
-    );
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      backgroundColorProvider.updateBackgroundColor(backgroundColor);
-    });
-
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Column(
